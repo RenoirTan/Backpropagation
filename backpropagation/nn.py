@@ -9,7 +9,7 @@ from backpropagation.loss import BaseLoss
 
 def sum_outs(activated: np.array) -> np.array:
     activated = np.atleast_2d(activated)
-    return np.atleast_2d(np.sum(activated, axis=1))
+    return np.atleast_2d(np.sum(activated, axis=1)).T
 
 
 class NeuralNetwork(object):
@@ -41,7 +41,7 @@ class NeuralNetwork(object):
         # the bias layer is being added to each output layer separately
         # (B behaves like it is shape (3, 2) where B[i][0] == B[i][1])
         for outsize in layers:
-            self.W.append(np.random.randn(insize, outsize))
+            self.W.append(np.random.randn(outsize, insize))
             self.B.append(np.random.randn(outsize, 1))
             insize = outsize
     
@@ -49,8 +49,10 @@ class NeuralNetwork(object):
         X = np.atleast_2d(X)
         Z = []
         A = [X]
+        # print(f"{X.shape=}")
         for li in range(len(self.W)):
-            Z.append(self.W[li] @ self.A[-1] + self.B[li])
+            # print(f"{self.W[li].shape=} {A[-1].shape=}")
+            Z.append(self.W[li] @ A[-1] + self.B[li])
             A.append(self.F[li].mass_activate(Z[-1]))
         return ForwardResult(self, Z, A)
     
@@ -60,11 +62,22 @@ class NeuralNetwork(object):
         Z.insert(0, None) # bit of padding
         A = forward_result.A
         D = [sum_outs(self.F[-1].mass_gradient(A[-1]) * self.loss.mass_gradient(A[-1], ys))]
-        for li in range(len(self.layers) - 2, 0, -1):
+        for li in range(len(self.layers) - 1, 0, -1):
+            # print(f"{self.W[li].shape=} {D[0].shape=}")
             D.insert(0, sum_outs(self.F[li-1].mass_gradient(Z[li])) * (self.W[li].T @ D[0]))
         for li in range(len(self.W)):
             self.W[li] -= self.alpha * (D[li] @ sum_outs(A[li]).T)
             self.B[li] -= self.alpha * D[li]
+    
+    def fit(self, X: np.array, y: np.array, train_size: int=0, epochs: int=100):
+        train_size = train_size or X.shape[1] // 10
+        indices = np.random.randint(0, X.shape[1], size=train_size)
+        X = X[:, indices]
+        y = y[:, indices]
+        for epoch in range(epochs):
+            self.backprop(self.forward(X), y)
+            loss = np.sum(self.forward(X).loss(y)) / np.sqrt(train_size)
+            print(f"{epoch=} {loss=}")
 
 
 @dataclass
@@ -76,3 +89,6 @@ class ForwardResult(object):
     @property
     def prediction(self) -> np.array:
         return self.A[-1]
+    
+    def loss(self, ys: np.array) -> np.array:
+        return self.nn.loss.mass_loss(self.A[-1], ys)

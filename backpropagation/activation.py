@@ -9,13 +9,13 @@ class BaseActivation(object):
         raise NotImplemented
     
     def mass_activate(self, zss: np.array) -> np.array:
-        return np.array([self.activate(zs) for zs in zss.T])
+        return np.array([self.activate(zs) for zs in zss.T]).T
     
     def gradient(self, zs: np.array) -> np.array:
         raise NotImplemented
     
     def mass_gradient(self, zss: np.array) -> np.array:
-        return np.array([self.activate(zs) for zs in zss.T])
+        return np.array([self.activate(zs) for zs in zss.T]).T
 
 
 class SigmoidActivation(BaseActivation):
