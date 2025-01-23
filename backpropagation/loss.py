@@ -22,7 +22,7 @@ class MeanSquareError(BaseLoss):
     def loss(self, y_hats: np.array, ys: np.array) -> np.array:
         # assert(y_hats.ndim == 1)
         assert(y_hats.shape == ys.shape)
-        return 0.5 * ((y_hats - ys.shape) ** 2)
+        return 0.5 * ((y_hats - ys) ** 2)
     
     def gradient(self, y_hats: np.array, ys: np.array) -> np.array:
         assert(y_hats.shape == ys.shape)

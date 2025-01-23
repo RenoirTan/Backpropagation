@@ -1,9 +1,10 @@
 from argparse import ArgumentParser
 from pathlib import Path
 import pickle
+import sys
 
 import numpy as np
-from backpropagation.nn import NeuralNetwork
+from backpropagation.nn import NeuralNetwork, sum_outs
 from backpropagation.activation import SigmoidActivation
 from backpropagation.loss import MeanSquareError
 

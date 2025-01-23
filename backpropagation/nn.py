@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+import sys
 
 import numpy as np
 
@@ -61,22 +62,27 @@ class NeuralNetwork(object):
         Z = list(forward_result.Z)
         Z.insert(0, None) # bit of padding
         A = forward_result.A
-        D = [sum_outs(self.F[-1].mass_gradient(A[-1]) * self.loss.mass_gradient(A[-1], ys))]
+        D = [self.F[-1].mass_gradient(A[-1]) * self.loss.mass_gradient(A[-1], ys)]
         for li in range(len(self.layers) - 1, 0, -1):
             # print(f"{self.W[li].shape=} {D[0].shape=}")
-            D.insert(0, sum_outs(self.F[li-1].mass_gradient(Z[li])) * (self.W[li].T @ D[0]))
+            # print(f"{self.F[li-1].mass_gradient(Z[li]).shape=}")
+            D.insert(0, self.F[li-1].mass_gradient(Z[li]) * (self.W[li].T @ D[0]))
         for li in range(len(self.W)):
-            self.W[li] -= self.alpha * (D[li] @ sum_outs(A[li]).T)
-            self.B[li] -= self.alpha * D[li]
+            # print(f"{(D[li] @ A[li].T).shape=}")
+            self.W[li] -= self.alpha * (D[li] @ A[li].T)
+            self.B[li] -= self.alpha * sum_outs(D[li])
     
     def fit(self, X: np.array, y: np.array, train_size: int=0, epochs: int=100):
         train_size = train_size or X.shape[1] // 10
-        indices = np.random.randint(0, X.shape[1], size=train_size)
-        X = X[:, indices]
-        y = y[:, indices]
         for epoch in range(epochs):
-            self.backprop(self.forward(X), y)
-            loss = np.sum(self.forward(X).loss(y)) / np.sqrt(train_size)
+            indices = np.random.randint(0, X.shape[1], size=train_size)
+            loss = 0
+            for i in indices:
+                sx = X[:, [i]]
+                sy = y[:, [i]]
+                self.backprop(self.forward(sx), sy)
+                loss += np.sum(self.forward(sx).loss(sy))
+            loss /= train_size
             print(f"{epoch=} {loss=}")
 
 
