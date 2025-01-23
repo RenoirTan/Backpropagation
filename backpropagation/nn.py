@@ -62,7 +62,7 @@ class NeuralNetwork(object):
         Z = list(forward_result.Z)
         Z.insert(0, None) # bit of padding
         A = forward_result.A
-        D = [self.F[-1].mass_gradient(A[-1]) * self.loss.mass_gradient(A[-1], ys)]
+        D = [self.F[-1].mass_gradient(Z[-1]) * self.loss.mass_gradient(A[-1], ys)]
         for li in range(len(self.layers) - 1, 0, -1):
             # print(f"{self.W[li].shape=} {D[0].shape=}")
             # print(f"{self.F[li-1].mass_gradient(Z[li]).shape=}")
@@ -76,13 +76,10 @@ class NeuralNetwork(object):
         train_size = train_size or X.shape[1] // 10
         for epoch in range(epochs):
             indices = np.random.randint(0, X.shape[1], size=train_size)
-            loss = 0
-            for i in indices:
-                sx = X[:, [i]]
-                sy = y[:, [i]]
-                self.backprop(self.forward(sx), sy)
-                loss += np.sum(self.forward(sx).loss(sy))
-            loss /= train_size
+            sx = X[:, indices]
+            sy = y[:, indices]
+            self.backprop(self.forward(sx), sy)
+            loss = np.sum(self.forward(sx).loss(sy)) / train_size
             print(f"{epoch=} {loss=}")
 
 
