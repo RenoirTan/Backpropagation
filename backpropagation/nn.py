@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import List
 import sys
 
+from tqdm import trange
 import numpy as np
 
 from backpropagation.activation import BaseActivation
@@ -74,13 +75,15 @@ class NeuralNetwork(object):
     
     def fit(self, X: np.array, y: np.array, train_size: int=0, epochs: int=100):
         train_size = train_size or X.shape[1] // 10
-        for epoch in range(epochs):
+        t = trange(epochs, unit="epoch")
+        for epoch in t:
             indices = np.random.randint(0, X.shape[1], size=train_size)
             sx = X[:, indices]
             sy = y[:, indices]
             self.backprop(self.forward(sx), sy)
             loss = np.sum(self.forward(sx).loss(sy)) / train_size
-            print(f"{epoch=} {loss=}")
+            t.set_description(desc=f"Loss: {loss:.5f}", refresh=True)
+            # print(f"{epoch=} {loss=}")
 
 
 @dataclass

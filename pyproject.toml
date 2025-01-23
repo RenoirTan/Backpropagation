@@ -8,6 +8,7 @@ authors = ["RenoirTan <renoirtan2005@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.13"
 numpy = "^2.2.2"
+tqdm = "^4.67.1"
 
 
 [build-system]
