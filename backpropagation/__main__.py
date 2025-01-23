@@ -64,3 +64,7 @@ for x, y in zip(X_test.T[indices], y_test.T[indices]):
     print(f"{y_hat=} {y=}")
     correct += y_hat == y
 print(correct / test_size)
+
+if args.out:
+    with Path(args.out).open("wb") as f:
+        pickle.dump(nn, f)
