@@ -77,7 +77,7 @@ class NeuralNetwork(object):
         train_size = train_size or X.shape[1] // 10
         t = trange(epochs, unit="epoch")
         for epoch in t:
-            indices = np.random.randint(0, X.shape[1], size=train_size)
+            indices = np.random.choice(X.shape[1], size=train_size, replace=False)
             sx = X[:, indices]
             sy = y[:, indices]
             self.backprop(self.forward(sx), sy)

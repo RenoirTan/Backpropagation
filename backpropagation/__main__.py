@@ -54,7 +54,7 @@ else:
     )
     nn.fit(X_train, y_train, train_size, epochs)
 
-indices = np.random.randint(low=0, high=X_test.shape[1], size=test_size)
+indices = np.random.choice(X_test.shape[1], size=test_size, replace=False)
 X_sample = X_test[:, indices]
 y_sample = y_test[:, indices]
 forward_result = nn.forward(X_sample)
