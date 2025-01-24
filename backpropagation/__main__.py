@@ -55,15 +55,15 @@ else:
     nn.fit(X_train, y_train, train_size, epochs)
 
 indices = np.random.randint(low=0, high=X_test.shape[1], size=test_size)
-correct = 0
-for x, y in zip(X_test.T[indices], y_test.T[indices]):
-    pred = nn.forward(np.atleast_2d(x).T).A[-1]
-    y = np.atleast_2d(y).T
-    y_hat = np.argmax(pred)
-    y = np.argmax(y)
-    print(f"{y_hat=} {y=}")
-    correct += y_hat == y
-print(correct / test_size)
+X_sample = X_test[:, indices]
+y_sample = y_test[:, indices]
+forward_result = nn.forward(X_sample)
+prediction = forward_result.prediction
+mse_loss = np.sum(forward_result.loss(y_sample)) / test_size
+predicted_answers = np.argmax(prediction, axis=0)
+expected_answers = np.argmax(y_sample, axis=0)
+correct = np.sum(predicted_answers == expected_answers)
+print(f"{correct=} {mse_loss=}")
 
 if args.out:
     with Path(args.out).open("wb") as f:
