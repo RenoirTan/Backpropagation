@@ -5,8 +5,8 @@ import sys
 
 import numpy as np
 from backpropagation.nn import NeuralNetwork, sum_outs
-from backpropagation.activation import SigmoidActivation
-from backpropagation.loss import MeanSquareError
+from backpropagation.activation import SigmoidActivation, ReluActivation, SoftmaxActivation
+from backpropagation.loss import MeanSquareError, CrossEntropyLoss
 
 
 ap = ArgumentParser(description="Neural Network in Numpy")
@@ -47,8 +47,12 @@ if args.model:
 else:
     nn = NeuralNetwork(
         insize=784,
-        layers=[512, 128, 64, 10],
-        activations=[SigmoidActivation() for _ in range(4)],
+        layers=[128, 64, 10],
+        activations=[
+            SigmoidActivation(),
+            SigmoidActivation(),
+            SoftmaxActivation()
+        ],
         loss=MeanSquareError(),
         learning_rate=alpha
     )

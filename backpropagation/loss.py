@@ -27,3 +27,13 @@ class MeanSquareError(BaseLoss):
     def gradient(self, y_hats: np.array, ys: np.array) -> np.array:
         assert(y_hats.shape == ys.shape)
         return y_hats - ys
+
+
+class CrossEntropyLoss(BaseLoss):
+    def loss(self, y_hats: np.array, ys: np.array) -> np.array:
+        assert(y_hats.shape == ys.shape)
+        return - ys * np.log(y_hats)
+    
+    def gradient(self, y_hats: np.array, ys: np.array) -> np.array:
+        assert(y_hats.shape == ys.shape)
+        return - ys / y_hats

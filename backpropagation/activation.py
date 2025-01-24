@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 
 
 class BaseActivation(object):
@@ -32,7 +33,7 @@ class ReluActivation(BaseActivation):
     def activate(self, zs: np.array) -> np.array:
         assert(zs.ndim == 1)
         a = np.array(zs, copy=True)
-        a[a < 0] = 0
+        a[zs < 0] = 0
         return a
     
     def gradient(self, zs: np.array) -> np.array:
@@ -40,3 +41,15 @@ class ReluActivation(BaseActivation):
         a = np.ones(zs.shape)
         a[zs <= 0] = 0
         return a
+
+
+class SoftmaxActivation(BaseActivation):
+    def activate(self, zs: np.array) -> np.array:
+        assert(zs.ndim == 1)
+        numerators = np.exp(zs)
+        denominator = np.sum(numerators)
+        return numerators / denominator
+    
+    def gradient(self, zs: np.array) -> np.array:
+        a = self.activate(zs)
+        return a * (1 - a)
