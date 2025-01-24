@@ -2,6 +2,38 @@
 
 This is my attempt at creating a deep learning model using just numpy. This is based on the demonstration found in [this article by Adrian Rosebrock](https://pyimagesearch.com/2021/05/06/backpropagation-from-scratch-with-python/). Key modifications are the transposing of the weight and input matrices in order to match the notation in the [Backpropagation wiki page](https://en.wikipedia.org/wiki/Backpropagation), and separating the biases from the weights so that the inputs to each bias is always 1. The examples shown below use the fashion MNIST data from [this repo](https://github.com/zalandoresearch/fashion-mnist). Since each image is 28 by 28 pixels, the total number of inputs per image is 784.
 
+## Setup
+
+Clone the `fashion-mnist` repository and follow the instructions on their README.md to get the training and test data.
+
+```bash
+git clone https://github.com/zalandoresearch/fashion-mnist
+cd fashion-mnist/utils
+python -c $(echo "
+import mnist_reader
+X_train, y_train = mnist_reader.load_mnist('../data/fashion', kind='train')
+X_test, y_test = mnist_reader.load_mnist('../data/fashion', kind='t10k')
+
+from pathlib import Path
+import pickle
+with Path('../fashion.pkl').open('wb') as f:
+    pickle.dump((X_train, y_train, X_test, y_test), f)
+")
+cd ..
+ls fashion.pkl
+```
+
+The training and test data can then be found in fashion.pkl.
+
+Run the test model with:
+
+```bash
+git clone https://github.com/RenoirTan/Backpropagation
+poetry install
+poetry shell
+python -m backpropagation /path/to/fashion.pkl -o /path/to/output_model.pkl -T 10 -t 10000 -e 10000 -a 0.01
+```
+
 ## Neural Network
 
 Creation of the neural network:
