@@ -116,7 +116,7 @@ with the error for preceding layers calculated with the following line:
 
 or $\delta_{l-1} = (F_{l-1}) \odot (W_l)^T \cdot \delta_l$
 
-For each layer $l$, the amount that each weight should be altered by can calculated by $\Delta w_{ij} = -\alpha \delta_j a_i$ where $a_i$ is the activated output of the previous layer. Hence, change in for each weight in that layer can be obtained using $\Delta W_l = -\alpha (\delta \cdot A_{l-1})$. Likewise, for the biases, the change in bias is $\Delta b_j = -\alpha (\delta_j \cdot 1) = -\alpha \delta_j$:
+For each layer $l$, the amount that each weight should be altered by can calculated by $\Delta w_{ij} = -\alpha \delta_j a_i$ where $a_i$ is the activated output of the previous layer. Hence, change in for each weight in that layer can be obtained using $\Delta W_l = -\alpha (\delta \cdot A_{l-1})$. Likewise, for the biases, the change in bias is $\Delta b_j = -\alpha (\delta_j \cdot 1) = -\alpha \delta_j$. The function `sum_outs` sums the `error` calculated over all input samples for each neuron.
 
 ```python
         for li in range(len(self.W)):
@@ -125,3 +125,16 @@ For each layer $l$, the amount that each weight should be altered by can calcula
 ```
 
 With the logic out of the way, the input to the neural network should be a column vector of 784 numbers and the output a column vector of 10 numbers. Multiple inputs and outputs can be fed through the model at the same time by placing all of the column vectors into one matrix. For example, if you want to pass in 100 images at the same time, the input matrix should have 784 rows and 100 columns and likewise for the outputs, 10 rows and 100 columns.
+
+## Evaluation
+
+It's terrible. For reference, on tensorflow, you should be getting accuracies of around 98%.
+
+But hey! At least it's better than random chance.
+
+| Samples Per Epoch (-T) | Epochs (-e) | Learning Rate (-a) | Accuracy |
+| ---------------------- | ----------- | ------------------ | -------- |
+| 300 | 1000 | 0.01 | 56.87% |
+| 100 | 3000 | 0.01 | 64.71% |
+| 32 | 12288 | 0.01 | 64.52% |
+| 32 | 12288 | 0.03 | 46.31% |
